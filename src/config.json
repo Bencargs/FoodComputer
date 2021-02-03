@@ -1,0 +1,10 @@
+{
+	"controls": [{
+		"name":"pump",
+		"checkSeconds":2
+	},
+	{
+		"name":"temperature",
+		"checkSeconds":5
+	}]
+}
