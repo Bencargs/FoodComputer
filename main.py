@@ -1,41 +1,30 @@
 import time, json
-
-class IEnvironmentalControl:
-    name = 'undefined'
-    checkSeconds = -1
-    
-    def __init__(self, name, checkSeconds):
-        self.name = name
-        self.checkSeconds = checkSeconds
-        
-    def CheckCondition(self) -> bool:
-        pass
-    
-    def ActionControl(self):
-        pass
-
+from pumpControl import pumpControl
+from temperatureControl import temperatureControl 
 
 def loadEnvironmentalControls():    
     controls = []
     with open('config.json', 'r') as reader:
         config = json.load(reader)
-        
-        for envControl in config['controls']:
-            name = envControl['name']
-            checkSeconds = envControl['checkSeconds']
-            controls.append(IEnvironmentalControl(name, checkSeconds))
+ 
+        for envSetting in config['controls']:
+            name = envSetting['name']
+            if 'pump' in name:
+                controls.append(pumpControl)
+            if 'temperature' in name:
+                controls.append(temperatureControl)
             
     return controls
             
 
-WAIT_SECONDS = 1 
+controls = loadEnvironmentalControls()  
 
-controls = loadEnvironmentalControls()
+WAIT_SECONDS = 1 
 while True:
- 
-     for c in controls:
-        if c.CheckCondition():
-            print('Executing control: {c.name}')
-            c.ActionControl()
-    
+         
+    for c in controls:
+        if c.Check():
+            print(f'Executing control: {c.Name}')
+            c.Action()
+            
     time.sleep(WAIT_SECONDS)
